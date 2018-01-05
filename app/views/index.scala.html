@@ -1,0 +1,8 @@
+@import uk.co.goblinoid.Book
+
+@(book: Option[Book] = None)
+
+@main("Book Lookup") {
+  <h1>Scan a barcode to continue</h1>
+  @book.map(b => renderBook(b)).getOrElse("")
+}
