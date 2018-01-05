@@ -1,3 +1,5 @@
+$(document).foundation();
+
 var keyBuffer = "";
 var timeoutID = null;
 
