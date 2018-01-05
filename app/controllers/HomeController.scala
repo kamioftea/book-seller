@@ -24,6 +24,7 @@ class HomeController @Inject()(cc: ControllerComponents,
                                ec: ExecutionContext) extends AbstractController(cc) {
 
   implicit val _: ExecutionContext = ec
+
   /**
     * Create an Action to render an HTML page.
     *
@@ -53,14 +54,20 @@ class HomeController @Inject()(cc: ControllerComponents,
         )
 
       req.get.map(res => {
-        val book = for{
+        val book = for {
           json <- (res.json \ "items" \ 0 \ "volumeInfo").toOption
-          title <- (json \ "title").get.asOpt[String]
-          description <- (json \ "description").get.asOpt[String]
-          authors <- (json \ "authors").get.asOpt[Seq[String]]
-          publishedDate <- (json \ "publishedDate").get.asOpt[String]
-          isbn <- (json \ "industryIdentifiers" \ 1 \ "identifier").get.asOpt[String]
-          imgUrl <- (json \ "imageLinks" \ "thumbnail").get.asOpt[String]
+          title <- (json \ "title").asOpt[String]
+          description <- (json \ "description").asOpt[String]
+          authors <- (json \ "authors").asOpt[Seq[String]]
+          publishedDate <- (json \ "publishedDate").asOpt[String]
+          isbn <- (json \ "industryIdentifiers")
+            .asOpt[JsArray]
+            .flatMap(seq =>
+              seq.value
+                .find(t => (t \ "type").asOpt[String].contains("ISBN_13"))
+                .flatMap(t => (t \ "identifier").asOpt[String])
+            )
+          imgUrl <- (json \ "imageLinks" \ "thumbnail").asOpt[String]
         } yield Book(title, description, authors, publishedDate, isbn.toLong, imgUrl)
 
         Ok(views.html.index(book))
