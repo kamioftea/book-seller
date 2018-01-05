@@ -53,16 +53,17 @@ class HomeController @Inject()(cc: ControllerComponents,
         )
 
       req.get.map(res => {
-        val json = res.json \ "items" \ 0 \ "volumeInfo"
+        val book = for{
+          json <- (res.json \ "items" \ 0 \ "volumeInfo").toOption
+          title <- (json \ "title").get.asOpt[String]
+          description <- (json \ "description").get.asOpt[String]
+          authors <- (json \ "authors").get.asOpt[Seq[String]]
+          publishedDate <- (json \ "publishedDate").get.asOpt[String]
+          isbn <- (json \ "industryIdentifiers" \ 1 \ "identifier").get.asOpt[String]
+          imgUrl <- (json \ "imageLinks" \ "thumbnail").get.asOpt[String]
+        } yield Book(title, description, authors, publishedDate, isbn.toLong, imgUrl)
 
-        Ok(views.html.index(Some(Book(
-          (json \ "title").get.as[String],
-          (json \ "description").get.as[String],
-          (json \ "authors").get.as[Seq[String]],
-          (json \ "publishedDate").get.as[String],
-          (json \ "industryIdentifiers" \ 1 \ "identifier").get.as[String].toLong,
-          (json \ "imageLinks" \ "thumbnail").get.as[String]
-        ))))
+        Ok(views.html.index(book))
       })
   }
 }

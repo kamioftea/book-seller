@@ -1,18 +1,23 @@
 @import uk.co.goblinoid.Book
 @(book: Book)
 
-<div class="callout">
-    <img src="@book.imgUrl">
-    <h2>@book.title</h2>
-    <p>@book.description</p>
-    <dl>
-        <dt>Author(s)</dt>
-        <dd>@book.authors.mkString(", ")</dd>
+<div class="callout grid-x grid-margin-x">
+    <div class="shrink cell">
+        <img src="@book.imgUrl">
+        <dl>
+            <dt>Author(s)</dt>
+            <dd>@book.authors.mkString(", ")</dd>
 
-        <dt>ISBN</dt>
-        <dd>@book.isbn</dd>
+            <dt>ISBN</dt>
+            <dd>@book.isbn</dd>
 
-        <dt>Published</dt>
-        <dd>@book.published</dd>
-    </dl>
+            <dt>Published</dt>
+            <dd>@book.published</dd>
+        </dl>
+    </div>
+    <div class="auto cell">
+        <h2>@book.title</h2>
+        <p>@book.description</p>
+    </div>
 </div>
+
