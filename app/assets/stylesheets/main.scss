@@ -1,9 +1,13 @@
-$fa-font-path: "../lib/font-awesome/web-fonts-with-css/webfonts";
-@import "lib/font-awesome/web-fonts-with-css/scss/fontawesome.scss";
-@import "lib/font-awesome/web-fonts-with-css/scss/fa-regular.scss";
-@import "lib/font-awesome/web-fonts-with-css/scss/fa-brands.scss";
+$fa-font-path: "/assets/fonts";
+@import "fontawesome/fontawesome.scss";
+@import "fontawesome/fa-regular.scss";
+@import "fontawesome/fa-brands.scss";
 
 @import "settings";
 @import "lib/foundation-sites/scss/foundation.scss";
 
 @include foundation-everything;
+
+#barcode-form {
+  padding-top: $global-margin;
+}
