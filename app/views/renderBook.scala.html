@@ -3,10 +3,10 @@
 
 <div class="callout grid-x grid-margin-x">
     <div class="shrink cell">
-        <img src="@book.imgUrl">
+        <img src="@book.thumbnailUrl">
         <dl>
             <dt>Author(s)</dt>
-            <dd>@book.authors.mkString(", ")</dd>
+            <dd>@book.authors.map(_.name).mkString(", ")</dd>
 
             <dt>ISBN</dt>
             <dd>@book.formattedIsbn</dd>

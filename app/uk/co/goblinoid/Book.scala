@@ -2,12 +2,15 @@ package uk.co.goblinoid
 
 import java.time.LocalDate
 
-case class Book(title: String,
+case class Author(id: Option[Long], name: String)
+
+case class Book(id: Option[Long],
+                title: String,
                 description: String,
-                authors: Seq[String],
+                authors: Seq[Author],
                 published: String,
                 isbn: Long,
-                imgUrl: String,
+                thumbnailUrl: String,
                )
 {
   private val Splitter = "(\\d{3})(\\d{1})(\\d{4})(\\d{4})(\\d{1})".r
