@@ -7,7 +7,7 @@ $(function () {
     var input = $('#barcode-input');
 
     $(document).keypress(function (event) {
-        if ((event.which === 10 || event.which === 13) && keyBuffer.length > 3) {
+        if ((event.which === 10 || event.which === 13) && keyBuffer.length >= 10) {
             event.preventDefault();
             location.pathname = "/barcode/" + keyBuffer;
             keyBuffer = "";
@@ -15,6 +15,12 @@ $(function () {
             {
                 clearTimeout(timeoutID);
             }
+            return;
+        }
+
+        if ((event.which === 10 || event.which === 13) && input.val().length) {
+            event.preventDefault();
+            $('#barcode-form').trigger('submit');
             return;
         }
 
@@ -39,11 +45,12 @@ $(function () {
 
     $('#barcode-form').on('submit', function (e) {
         e.preventDefault();
-        var barcode = input.val();
+        var barcode = input.val().replace(/-/g, "");
         input.val("");
+        console.log(barcode);
         if (barcode.match(/^\d{10,13}$/))
         {
             location.pathname = "/barcode/" + barcode;
         }
     })
-})
+});
