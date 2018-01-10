@@ -1,8 +1,10 @@
-@import uk.co.goblinoid.Book
-@(book: Book)
+@import uk.co.goblinoid.{Book, Stock, Novel, NonFiction, ShortStories, GraphicNovel, Paperback, Hardback, Location}
+@import play.filters.csrf._
+
+@(book: Book, stocks: Seq[Stock] = Seq())(implicit req: RequestHeader, location: Map[Long, Location])
 
 <div class="callout grid-x grid-margin-x">
-    <div class="shrink cell">
+    <div class="medium-shrink cell">
         <img src="@book.thumbnailUrl">
         <dl>
             <dt>Author(s)</dt>
@@ -14,10 +16,118 @@
             <dt>Published</dt>
             <dd>@book.published</dd>
         </dl>
+        <label>
+            Type
+            <select class="sync-input" data-url="@routes.HomeController.updateBook(book.id.get)?csrfToken=@CSRF.getToken.get.value" data-key="type">
+                <option value="" @if(book.bookType.isEmpty) {selected="selected"}>
+                    -- None --</option>
+                <option value="novel" @if(book.bookType.contains(Novel)) {selected="selected"}>
+                    Novel</option>
+                <option value="short_stories" @if(book.bookType.contains(ShortStories)) {selected="selected"}>
+                    Short Stories</option>
+                <option value="non_fiction" @if(book.bookType.contains(NonFiction)) {selected="selected"}>
+                    Non-fiction</option>
+                <option value="graphic_novel" @if(book.bookType.contains(GraphicNovel)) {selected="selected"}>
+                    Graphic Novel</option>
+            </select>
+        </label>
+        <label>
+            Format
+            <select class="sync-input" data-url="@routes.HomeController.updateBook(book.id.get)?csrfToken=@CSRF.getToken.get.value" data-key="format">
+                <option value="" @if(book.bookFormat.isEmpty) {selected="selected"}>
+                    -- None --</option>
+                <option value="paperback" @if(book.bookFormat.contains(Paperback)) {selected="selected"}>
+                    Paperback</option>
+                <option value="hardback" @if(book.bookFormat.contains(Hardback)) {selected="selected"}>
+                    Hardback</option>
+            </select>
+        </label>
+        <label>
+            <input type="checkbox" class="sync-input" data-url="@routes.HomeController.updateBook(book.id.get)?csrfToken=@CSRF.getToken.get.value" data-key="oversized">
+            Oversized?
+        </label>
+        <label>
+            Series
+            <input type="text" class="sync-input"
+                   value="@book.series.getOrElse("")"
+                   data-url="@routes.HomeController.updateBook(book.id.get)?csrfToken=@CSRF.getToken.get.value"
+                   data-key="series"/>
+        </label>
+        <label>
+            Series Position
+            <input type="number" class="sync-input"
+                   value="@book.seriesPosition.getOrElse("")"
+                   data-url="@routes.HomeController.updateBook(book.id.get)?csrfToken=@CSRF.getToken.get.value"
+                   data-key="series_position"/>
+        </label>
     </div>
-    <div class="auto cell">
+    <div class="medium-auto cell">
         <h2>@book.title</h2>
         <p>@book.description</p>
+        <label>
+            <i class="far fa-edit"></i>
+            Notes
+            <textarea class="sync-input"
+                      data-url="@routes.HomeController.updateBook(book.id.get)?csrfToken=@CSRF.getToken.get.value"
+                      data-key="notes">@book.notes</textarea>
+        </label>
+        <div class="grid-x">
+            <div class="medium-6 cell">
+                <h2>Stock</h2>
+            </div>
+            <div class="medium-6 cell text-right">
+                <form method="post" action="@routes.HomeController.addStock()" id="stock-add-form">
+                    <input type="hidden" name="csrfToken" value="@CSRF.getToken.get.value"/>
+                    <input type="hidden" name="book_id" value="@book.id.get"/>
+                    <div class="input-group">
+                        <label for="stock-location-select" class="input-group-label">
+                            <i class="far fa-plus"></i>
+                        </label>
+                        <select id="stock-location-select" name="location_id">
+                            <option value="">-- Choose Location --</option>
+                            @for(loc <- location.values.toSeq.sortBy(_.name)) {
+                                <option value="@loc.id.get">@loc.name</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @for(stock <- stocks) {
+            <div class="grid-x grid-margin-x">
+                <div class="medium-4 cell">
+                    <label>
+                    Location
+                        <select class="sync-input"
+                            data-url="@routes.HomeController.updateStock(stock.id.get)?csrfToken=@CSRF.getToken.get.value"
+                            data-key="location">
+                        @for(loc <- location.values.toSeq.sortBy(_.name)) {
+                            <option value="@loc.id" @if(loc.id.get == stock.locationId) {selected="selected"}>@loc.name</option>
+                        }
+                        </select>
+                    </label>
+                </div>
+                <div class="medium-6 cell middle">
+                    <label>
+                    Condition
+                        <textarea class="sync-input"
+                              data-url="@routes.HomeController.updateStock(stock.id.get)?csrfToken=@CSRF.getToken.get.value"
+                              data-key="condition">@stock.conditionDescription.getOrElse("")</textarea>
+                    </label>
+                </div>
+                <div class="medium-2 cell text-right">
+                    <form action="@routes.HomeController.removeStock(stock.id.get)" method="post">
+                        <input type="hidden" name="csrfToken" value="@CSRF.getToken.get.value"/>
+                        <label>
+                        Delete<br>
+                            <button type="submit" class="button alert">
+                                <i class="far fa-trash"></i>
+                            </button>
+                    </label>
+                    </form>
+                </div>
+            </div>
+        }
     </div>
 </div>
 

@@ -47,10 +47,38 @@ $(function () {
         e.preventDefault();
         var barcode = input.val().replace(/-/g, "");
         input.val("");
-        console.log(barcode);
+
         if (barcode.match(/^\d{10,13}$/))
         {
             location.pathname = "/barcode/" + barcode;
         }
+    });
+
+    $( '.sync-input').on('change keyup', function () {
+        var $this = $(this);
+        var params = {
+            key: $this.data('key'),
+            value: $this.val()
+        };
+
+        if($this.prop('type') === 'checkbox') {
+            params.value = $this.prop('checked') ? 'true' : 'false';
+        }
+
+        $.ajax({
+            type: 'post',
+            url: $this.data('url'),
+            data: params,
+            success: function () {
+                $this.addClass('success').removeClass('error')
+            },
+            error: function () {
+                $this.addClass('error').removeClass('success')
+            }
+        })
+    })
+
+    $('#stock-location-select').on('change', function () {
+        $('#stock-add-form').submit()
     })
 });

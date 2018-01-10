@@ -1,6 +1,6 @@
-@import uk.co.goblinoid.Book
+@import uk.co.goblinoid.{Book, Stock, Location}
 
-@(book: Option[Book] = None)
+@(book: Option[Book] = None, stocks: Seq[Stock] = Seq())(implicit req: RequestHeader, location: Map[Long, Location])
 
 @main("Book Lookup") {
   <div class="grid-container">
@@ -23,6 +23,6 @@
       </div>
     </div>
 
-    @book.map(b => renderBook(b)).getOrElse("")
+    @book.map(b => renderBook(b, stocks)).getOrElse("")
   </div>
 }

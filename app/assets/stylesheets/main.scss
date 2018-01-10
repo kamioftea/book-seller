@@ -11,3 +11,7 @@ $fa-font-path: "/assets/fonts";
 #barcode-form {
   padding-top: $global-margin;
 }
+
+.input-group select {
+  margin-bottom: 0;
+}
