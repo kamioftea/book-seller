@@ -15,3 +15,6 @@ POST        /book/stock/:id/delete        controllers.HomeController.removeStock
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                 controllers.Assets.versioned(path="/public", file: Asset)
+
+GET         /v2/book/$id<[0-9]+>          controllers.BookController.view(id: Long)
+GET         /v2/barcode/:barcode          controllers.BookController.barcode(barcode: String)
