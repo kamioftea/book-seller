@@ -60,7 +60,7 @@ class HomeController @Inject()(cc: ControllerComponents,
     SQL(
       """SELECT a.id, a.name
         |FROM author a
-        |JOIN book_author ba
+        |JOIN book_author ba ON (ba.author_id = a.id)
         |WHERE ba.book_id = {bookId}""".stripMargin
     )
       .on("bookId" -> bookId)
